@@ -2,11 +2,13 @@ import sqlite3
 import random
 from collections import Counter
 import datetime
+import os
 
 DATABASE_PATH = "lotofacil.db"
 ULTIMOS_CONCURSOS = 50  # Ajustado para pegar os últimos 50 concursos
 ULTIMOS_JOGOS_NO_TXT = 30  # Número de jogos recentes a serem salvos no arquivo
 NUM_JOGOS = 3  # Quantidade de jogos a serem gerados
+PASTA_APOSTAS = "Apostas"  # Nome da pasta onde os jogos serão salvos
 
 def buscar_resultados(banco_de_dados, limite=ULTIMOS_CONCURSOS):
     """Busca os últimos concursos no banco de dados."""
@@ -56,8 +58,13 @@ def salvar_jogos(jogos, ultimos_jogos):
         print("Nenhum jogo foi gerado para salvar.")
         return
 
+    # Verificar se a pasta Apostas existe, senão cria
+    if not os.path.exists(PASTA_APOSTAS):
+        os.makedirs(PASTA_APOSTAS)
+
+    # Definindo o caminho completo do arquivo
     data_atual = datetime.datetime.now().strftime("%d.%m.%Y")
-    arquivo = f"jogos_recomendados_{data_atual}.txt"
+    arquivo = os.path.join(PASTA_APOSTAS, f"jogos_recomendados_{data_atual}.txt")
 
     try:
         with open(arquivo, "w") as f:
