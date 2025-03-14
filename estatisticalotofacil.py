@@ -5,7 +5,7 @@ import datetime
 
 DATABASE_PATH = "lotofacil.db"
 ULTIMOS_CONCURSOS = 50  # Ajustado para pegar os últimos 50 concursos
-ULTIMOS_JOGOS_NO_TXT = 10  # Número de jogos recentes a serem salvos no arquivo
+ULTIMOS_JOGOS_NO_TXT = 30  # Número de jogos recentes a serem salvos no arquivo
 
 def buscar_resultados(banco_de_dados, limite=ULTIMOS_CONCURSOS):
     """Busca os últimos concursos no banco de dados."""
@@ -45,7 +45,7 @@ def gerar_jogo(estatisticas):
     return sorted(top_10 + top_5)
 
 def salvar_jogo(jogo, ultimos_jogos):
-    """Salva o jogo gerado e os últimos 10 concursos em um arquivo de texto."""
+    """Salva o jogo gerado e os últimos 30 concursos em um arquivo de texto."""
     if not jogo:
         print("Nenhum jogo foi gerado para salvar.")
         return
