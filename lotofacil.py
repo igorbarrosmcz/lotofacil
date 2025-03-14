@@ -32,15 +32,25 @@ def obter_dados_concurso(numero_concurso):
         return None
 
 def salvar_concurso(concurso, data_apuracao, dezenas, acumulado):
-    """Salva os dados do concurso no banco de dados."""
+    """Salva os dados do concurso no banco de dados, se ainda não estiver salvo."""
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
-    cursor.execute("""
-        INSERT OR IGNORE INTO lotofacil (concurso, data_apuracao, dezenas, acumulado)
-        VALUES (?, ?, ?, ?)
-    """, (concurso, data_apuracao, ",".join(dezenas), int(acumulado)))
-    conn.commit()
+
+    # Verificar se o concurso já existe no banco
+    cursor.execute("SELECT 1 FROM lotofacil WHERE concurso = ?", (concurso,))
+    if cursor.fetchone():
+        print(f"Concurso {concurso} já está salvo no banco de dados.")
+    else:
+        # Inserir o concurso no banco de dados caso ainda não exista
+        cursor.execute("""
+            INSERT INTO lotofacil (concurso, data_apuracao, dezenas, acumulado)
+            VALUES (?, ?, ?, ?)
+        """, (concurso, data_apuracao, ",".join(dezenas), int(acumulado)))
+        conn.commit()
+        print(f"Concurso {concurso} salvo com sucesso.")
+
     conn.close()
+
 
 def obter_ultimo_concurso():
     """Obtém o número do último concurso disponível na API."""
