@@ -81,7 +81,7 @@ def salvar_jogos(jogos, ultimos_jogos):
             for i, jogo in enumerate(jogos, 1):
                 f.write(f"Jogo {i}: " + " ".join(f"{num:02d}" for num in jogo) + "\n")
             
-            f.write("\nÚltimos 10 jogos sorteados:\n")
+            f.write("\nÚltimos 30 jogos sorteados:\n")
             f.write("-" * 40 + "\n")
             for concurso, dezenas in ultimos_jogos[:ULTIMOS_JOGOS_NO_TXT]:
                 f.write(f"Concurso {concurso}: " + " ".join(f"{int(num):02d}" for num in dezenas) + "\n")
@@ -106,3 +106,6 @@ def main():
         salvar_jogos(jogos, resultados)
     else:
         print("Não foi possível gerar jogos.")
+
+if __name__ == "__main__":
+    main()
