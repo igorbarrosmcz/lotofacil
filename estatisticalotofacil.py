@@ -10,21 +10,28 @@ ULTIMOS_JOGOS_NO_TXT = 30  # Número de jogos recentes a serem salvos no arquivo
 NUM_JOGOS = 3  # Quantidade de jogos a serem gerados
 PASTA_APOSTAS = "Apostas"  # Nome da pasta onde os jogos serão salvos
 
-def buscar_resultados(banco_de_dados, limite=ULTIMOS_CONCURSOS):
-    """Busca os últimos concursos no banco de dados."""
+def buscar_resultados(banco_de_dados, limite=None):
+    """Busca concursos no banco de dados. Se limite for None, retorna todos."""
     try:
         with sqlite3.connect(banco_de_dados) as conn:
             cursor = conn.cursor()
-            cursor.execute('''
-                SELECT concurso, dezenas FROM lotofacil
-                ORDER BY concurso DESC
-                LIMIT ?
-            ''', (limite,))
+            if limite:
+                cursor.execute('''
+                    SELECT concurso, dezenas FROM lotofacil
+                    ORDER BY concurso DESC
+                    LIMIT ?
+                ''', (limite,))
+            else:
+                cursor.execute('''
+                    SELECT concurso, dezenas FROM lotofacil
+                    ORDER BY concurso DESC
+                ''')
             resultados = cursor.fetchall()
         return [(row[0], row[1].split(",")) for row in resultados]
     except sqlite3.Error as e:
         print(f"Erro ao acessar o banco de dados: {e}")
         return []
+
 
 def calcular_estatisticas(dezenas):
     """Calcula a frequência das dezenas nos últimos concursos."""
@@ -84,7 +91,7 @@ def salvar_jogos(jogos, ultimos_jogos):
         print(f"Erro ao salvar jogos no arquivo: {e}")
 
 def main():
-    resultados = buscar_resultados(DATABASE_PATH)
+    resultados = buscar_resultados(DATABASE_PATH, limite=None)  # Pegando todos os concursos
     if not resultados:
         print("Nenhum dado encontrado. Verifique o banco de dados.")
         return
@@ -99,6 +106,3 @@ def main():
         salvar_jogos(jogos, resultados)
     else:
         print("Não foi possível gerar jogos.")
-
-if __name__ == "__main__":
-    main()
